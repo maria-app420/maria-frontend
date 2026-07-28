@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>marIA - Inteligencia Artificial de Cultivo</title>
+    <style>
+        :root {
+            --primary-green: #2e7d32;
+            --dark-bg: #1a2e1b;
+            --light-bg: #f4f6f4;
+            --white: #ffffff;
+            --pastel-yellow: #fff59d;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--light-bg);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: -webkit-fill-available;
+        }
+
+        html {
+            height: -webkit-fill-available;
+        }
+
+        /* PANTALLA DE CARGA BIENVENIDA (SPLASH SCREEN) */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--dark-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: var(--white);
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: opacity 0.5s ease;
+        }
+
+        #splash-screen img {
+            max-height: 80px;
+            width: auto;
+            margin-bottom: 20px;
+        }
+
+        #splash-screen h2 {
+            font-size: 1.8rem;
+            margin: 10px 0;
+        }
+
+        #splash-screen p {
+            color: var(--pastel-yellow);
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Animación del spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border-left-color: var(--primary-green);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Encabezado Principal */
+        header {
+            background-color: var(--dark-bg);
+            color: var(--white);
+            text-align: center;
+            padding: 20px 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .logo-container {
+            margin-bottom: 8px;
+        }
+
+        .logo-container img {
+            max-height: 40px;
+            width: auto;
+            vertical-align: middle;
+        }
+
+        header h1 {
+            margin: 5px 0;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+        }
+
+        header h1 span.ia-verde {
+            color: var(--primary-green);
+            font-weight: bold;
+        }
+
+        header p {
+            margin: 5px 0 0 0;
+            font-size: 1.1rem;
+            color: #e0e0e0;
+        }
+
+        header p span.hecha-por {
+            color: var(--pastel-yellow);
+        }
+
+        header p strong {
+            color: var(--white);
+            letter-spacing: 0.5px;
+        }
+
+        /* Zona del Chat */
+        .chat-container {
+            flex: 1;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            background: var(--white);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .message.maria {
+            background-color: var(--light-bg);
+            color: #333;
+            align-self: flex-start;
+            border-top-left-radius: 4px;
+        }
+
+        .message.user {
+            background-color: var(--primary-green);
+            color: var(--white);
+            align-self: flex-end;
+            border-top-right-radius: 4px;
+        }
+
+        /* Área general de entrada */
+        .chat-input-wrapper {
+            background: #ffffff;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Barra de Entrada de Texto Móvil */
+        .chat-input-area {
+            padding: 15px 20px;
+            padding-bottom: calc(20px + env(safe-area-inset-bottom)); 
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1px solid #cccccc;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.2s;
+            -webkit-appearance: none;
+        }
+
+        .chat-input-area input:focus {
+            border-color: var(--primary-green);
+        }
+
+        .chat-input-area button {
+            background-color: var(--primary-green);
+            color: var(--white);
+            border: none;
+            padding: 0 25px;
+            height: 45px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .chat-input-area button:hover {
+            background-color: #1b5e20;
+        }
+
+        @media (min-width: 768px) {
+            .chat-container {
+                margin: 20px auto;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            }
+            .chat-input-area {
+                padding-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PANTALLA DE CARGA CON TU FRASE -->
+    <div id="splash-screen">
+        <div class="spinner"></div>
+        <img src="logo.png" alt="marIA Logo" onerror="this.style.display='none';">
+        <h2>marIA está iniciando...</h2>
+        <p>ya estoy con vos, ¡BUENOS HUMOS! 🍁</p>
+    </div>
+
+    <header>
+        <div class="logo-container">
+            <img src="logo.png" alt="CATABOOK" onerror="this.style.display='none';">
+        </div>
+        <h1>mar<span class="ia-verde">IA</span></h1>
+        <p>tu asistente de cultivo, N° 1 de la argentina, <span class="hecha-por">hecha por</span> <strong>CATABOOK</strong></p>
+    </header>
+
+    <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+            <div class="message maria">
+                ¡Buenas! Soy marIA. Estoy lista para optimizar tu cultivo con toda nuestra base de datos. ¿Cómo te llamás y de qué provincia me escribís?
+            </div>
+        </div>
+
+        <div class="chat-input-wrapper">
+            <!-- Inputs y controles de envío -->
+            <div class="chat-input-area">
+                <input type="text" id="userInput" placeholder="Preguntale a marIA..." onkeypress="handleKeyPress(event)">
+                <button onclick="enviarMensaje()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let historialMessages = [];
+
+        // Ocultar la pantalla de carga cuando la página termine de procesar todo
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                }, 500);
+            }, 1500);
+        });
+
+        async function enviarMensaje() {
+            const inputElement = document.getElementById('userInput');
+            const mensajeTexto = inputElement.value.trim();
+            
+            if (!mensajeTexto) return;
+
+            agregarMensajeAInterfaz(mensajeTexto, 'user');
+            inputElement.value = '';
+
+            const chatMessages = document.getElementById('chatMessages');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message maria';
+            loadingDiv.innerText = 'Escribiendo...';
+            loadingDiv.id = 'loadingMessage';
+            chatMessages.appendChild(loadingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: mensajeTexto,
+                        historial: historialMessages,
+                        nombre: "Cultivador",
+                        provincia: "Argentina"
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (document.getElementById('loadingMessage')) {
+                    document.getElementById('loadingMessage').remove();
+                }
+
+                let respuestaMarIA = "";
+
+                if (data.response) {
+                    respuestaMarIA = data.response;
+                } else if (data.message) {
+                    respuestaMarIA = data.message;
+                } else {
+                    respuestaMarIA = "Disculpá. Tuve un problema para procesar tu solicitud en este momento.";
+                }
+
+                agregarMensajeAInterfaz(respuestaMarIA, 'maria');
+
+                historialMessages.push({ role: 'user', content: mensajeTexto });
+                historialMessages.push({ role: 'model', content: respuestaMarIA });
+
+            } catch (error) {
+                console.error("Error:", error);
+                if (document.getElementById('loadingMessage')) {
+                    document.getElementById('loadingMessage').remove();
+                }
+                agregarMensajeAInterfaz("Disculpá, me costó conectarme con mis agentes. ¿Me volvés a probar en un toque?", 'maria');
+            }
+        }
+
+        function agregarMensajeAInterfaz(texto, emisor) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${emisor}`;
+            messageDiv.innerText = texto;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                enviarMensaje();
+            }
+        }
+    </script>
+</body>
+</html>
