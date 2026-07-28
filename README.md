@@ -1,2 +1,2 @@
 # maria-frontend
-nterfaz web para marIA
+Interfaz web para marIA
